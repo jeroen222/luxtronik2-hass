@@ -1,12 +1,16 @@
 {
   "domain": "luxtronik2_hass",
   "name": "Luxtronik 2.0 (Home Assistant)",
-  "codeowners": ["@notDIRK"],
+  "codeowners": [
+    "@notDIRK"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/notDIRK/luxtronik2-hass",
   "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/notDIRK/luxtronik2-hass/issues",
-  "requirements": ["luxtronik==0.3.14"],
-  "version": "1.2.4"
+  "requirements": [
+    "luxtronik==0.3.14"
+  ],
+  "version": "1.2.5"
 }

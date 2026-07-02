@@ -1,0 +1,39 @@
+name: Release
+
+# On every published GitHub release, build a zip of the integration and attach it
+# as a release asset. HACS (via "zip_release" in hacs.json) then downloads this asset
+# instead of the source archive — and GitHub counts each download in the asset's
+# download_count, giving a cumulative install/update proxy that the source zipball
+# does not provide.
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+
+jobs:
+  release-zip:
+    name: Build and attach HACS zip asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Sync manifest version to release tag
+        env:
+          VERSION: ${{ github.ref_name }}
+        run: |
+          python3 -c "import json, os; p='custom_components/luxtronik2_hass/manifest.json'; v=os.environ['VERSION']; v=v[1:] if v.startswith('v') else v; d=json.load(open(p)); d['version']=v; f=open(p,'w'); json.dump(d, f, indent=2); f.write('\n')"
+
+      - name: Create integration zip (domain files at zip root)
+        run: |
+          cd custom_components/luxtronik2_hass
+          zip -r ../../luxtronik2_hass.zip . -x '*__pycache__*'
+
+      - name: Upload zip to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: luxtronik2_hass.zip

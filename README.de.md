@@ -264,6 +264,10 @@ Falls du zuvor die alte `luxtronik2_modbus_proxy`‑HACS‑Integration (v1.1) ve
 - Probleme: [GitHub Issues](https://github.com/notDIRK/luxtronik2-hass/issues)
 - Diskussionen: [GitHub Discussions](https://github.com/notDIRK/luxtronik2-hass/discussions)
 
+## Unterstütze das Projekt ⭐
+
+Wenn dir diese Integration nützt, **[gib dem Repository einen Stern](https://github.com/notDIRK/luxtronik2-hass)** — das ist das klarste Signal, dass sie genutzt wird, und hilft, den Pflegeaufwand zu rechtfertigen. Optional kannst du die eingebaute, opt‑in und vollständig anonyme [Analytics](https://www.home-assistant.io/integrations/analytics/) von Home Assistant aktivieren (**Einstellungen → System → Allgemein**), um das Home‑Assistant‑Projekt allgemein zu unterstützen.
+
 ## Lizenz
 
 [MIT](LICENSE) — passend zum Ökosystem der `luxtronik`‑Bibliothek.
