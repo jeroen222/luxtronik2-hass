@@ -99,7 +99,10 @@ class TestNumberDescriptions:
 
     def test_hot_water_setpoint(self) -> None:
         desc = next(d for d in NUMBER_DESCRIPTIONS_DATA if d.get("key") == "hot_water_setpoint")
-        assert desc["lux_index"] == 105
+        # Parameter 2 (ID_Einst_BWS_akt) is the actual setting; param 105 is the
+        # computed current setpoint the controller overwrites immediately. See
+        # commit fe472e7 "fix(number): write hot water setpoint to correct index".
+        assert desc["lux_index"] == 2
         assert desc["native_min_value"] == 30.0
         assert desc["native_max_value"] == 65.0
         assert desc["native_step"] == 0.5
