@@ -58,6 +58,21 @@ _lux_calcs = _lc.Calculations()
 _lux_params = _lp.Parameters()
 
 
+def _seconds_to_hours(raw: int | None) -> float | None:
+    """Convert a Luxtronik operating-time counter from seconds to hours.
+
+    The luxtronik library exposes indices 56/63/64/65 as the ``Seconds``
+    datatype, whose ``from_heatpump()`` returns the raw seconds value unchanged.
+    These counters are surfaced with a native unit of hours, so divide by 3600.
+    Display precision is handled by ``suggested_display_precision`` — the stored
+    value keeps full precision so the TOTAL_INCREASING statistic stays smooth.
+    (Fixes #1: raw seconds were previously displayed with a "h" unit.)
+    """
+    if raw is None:
+        return None
+    return raw / 3600
+
+
 # ---------------------------------------------------------------------------
 # LuxtronikSensorEntityDescription
 # ---------------------------------------------------------------------------
@@ -284,7 +299,9 @@ CORE_SENSOR_DESCRIPTIONS: tuple[LuxtronikSensorEntityDescription, ...] = (
         value_fn=_lux_calcs.calculations[257].from_heatpump,  # D-04, D-17
     ),
     # Operating hours — enabled by default, every WP owner needs these.
-    # Luxtronik stores seconds; from_heatpump() converts to hours (float).
+    # Luxtronik stores these counters in SECONDS (library datatype ``Seconds``,
+    # whose from_heatpump() returns the raw seconds unchanged); _seconds_to_hours
+    # divides by 3600 so the "h" unit is truthful. (Fixes #1.)
     # Calculation index 56: Compressor 1 operating hours (ID_WEB_Zaehler_BetrZeitVD1)
     LuxtronikSensorEntityDescription(
         key="operating_hours_compressor",
@@ -292,9 +309,10 @@ CORE_SENSOR_DESCRIPTIONS: tuple[LuxtronikSensorEntityDescription, ...] = (
         icon="mdi:timer-cog",
         native_unit_of_measurement="h",
         state_class=SensorStateClass.TOTAL_INCREASING,
+        suggested_display_precision=1,
         data_source="calculations",
         lux_index=56,
-        value_fn=_lux_calcs.calculations[56].from_heatpump,
+        value_fn=_seconds_to_hours,
     ),
     # Calculation index 63: Total heat pump operating hours (ID_WEB_Zaehler_BetrZeitWP)
     LuxtronikSensorEntityDescription(
@@ -303,9 +321,10 @@ CORE_SENSOR_DESCRIPTIONS: tuple[LuxtronikSensorEntityDescription, ...] = (
         icon="mdi:timer",
         native_unit_of_measurement="h",
         state_class=SensorStateClass.TOTAL_INCREASING,
+        suggested_display_precision=1,
         data_source="calculations",
         lux_index=63,
-        value_fn=_lux_calcs.calculations[63].from_heatpump,
+        value_fn=_seconds_to_hours,
     ),
     # Calculation index 64: Heating circuit operating hours (ID_WEB_Zaehler_BetrZeitHz)
     LuxtronikSensorEntityDescription(
@@ -314,9 +333,10 @@ CORE_SENSOR_DESCRIPTIONS: tuple[LuxtronikSensorEntityDescription, ...] = (
         icon="mdi:radiator",
         native_unit_of_measurement="h",
         state_class=SensorStateClass.TOTAL_INCREASING,
+        suggested_display_precision=1,
         data_source="calculations",
         lux_index=64,
-        value_fn=_lux_calcs.calculations[64].from_heatpump,
+        value_fn=_seconds_to_hours,
     ),
     # Calculation index 65: Hot water operating hours (ID_WEB_Zaehler_BetrZeitBW)
     LuxtronikSensorEntityDescription(
@@ -325,9 +345,10 @@ CORE_SENSOR_DESCRIPTIONS: tuple[LuxtronikSensorEntityDescription, ...] = (
         icon="mdi:water-boiler",
         native_unit_of_measurement="h",
         state_class=SensorStateClass.TOTAL_INCREASING,
+        suggested_display_precision=1,
         data_source="calculations",
         lux_index=65,
-        value_fn=_lux_calcs.calculations[65].from_heatpump,
+        value_fn=_seconds_to_hours,
     ),
     # Heat quantity meter (Wärmemengenzähler) — enabled by default.
     # Luxtronik stores kWh * 10; from_heatpump() divides by 10 → kWh.
