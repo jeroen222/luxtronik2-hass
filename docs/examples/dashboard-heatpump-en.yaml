@@ -41,10 +41,24 @@ views:
           - entity: sensor.luxtronik_2_0_luxtronik_status_reason
             name: "Status Reason"
             icon: "mdi:help-circle-outline"
-          - type: template
-            entity: sensor.luxtronik_2_0_luxtronik_status_duration
+          # The raw ...status_duration sensor reports seconds. To display it as
+          # "Xh Ymin", add this template sensor ONCE to your configuration.yaml
+          # (then restart Home Assistant):
+          #
+          #   template:
+          #     - sensor:
+          #         - name: "Status Duration Formatted"
+          #           unique_id: luxtronik_status_duration_formatted
+          #           icon: mdi:timer-sand
+          #           state: >
+          #             {% set s = states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0) %}
+          #             {{ s // 3600 }}h {{ (s % 3600) // 60 }}min
+          #
+          # It then appears as sensor.status_duration_formatted and is referenced
+          # here as a plain entity (no custom card needed, editor-clean).
+          # If you skip the template sensor, comment out the next line.
+          - entity: sensor.status_duration_formatted
             name: "Status Duration"
-            state: "{{ ((states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0)) // 3600) }}h {{ (((states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0)) % 3600) // 60) }}min"
             icon: "mdi:timer-sand"
           - entity: sensor.luxtronik_2_0_luxtronik_compressor
             name: "Compressor"

@@ -43,10 +43,25 @@ views:
             icon: "mdi:help-circle-outline"
           # EVU-Sperrzeit: laufende Dauer seit EVU den Kompressor gesperrt hat.
           # Die Luxtronik zeigt diesen Wert auf dem Display als "Sperrzeit" an.
-          - type: template
-            entity: sensor.luxtronik_2_0_luxtronik_status_duration
+          #
+          # Der Roh-Sensor ...status_duration liefert Sekunden. Um ihn als
+          # "Xh Ymin" anzuzeigen, lege EINMALIG diesen Template-Sensor in deiner
+          # configuration.yaml an (danach Home Assistant neu starten):
+          #
+          #   template:
+          #     - sensor:
+          #         - name: "EVU-Sperrzeit"
+          #           unique_id: luxtronik_evu_sperrzeit_formatted
+          #           icon: mdi:timer-lock
+          #           state: >
+          #             {% set s = states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0) %}
+          #             {{ s // 3600 }}h {{ (s % 3600) // 60 }}min
+          #
+          # Danach erscheint er als sensor.evu_sperrzeit und wird hier als ganz
+          # normale Entity referenziert (kein Custom-Card nötig, editor-sauber).
+          # Wer den Template-Sensor nicht anlegt, kommentiert die nächste Zeile aus.
+          - entity: sensor.evu_sperrzeit
             name: "EVU-Sperrzeit"
-            state: "{{ ((states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0)) // 3600) }}h {{ (((states('sensor.luxtronik_2_0_luxtronik_status_duration') | int(0)) % 3600) // 60) }}min"
             icon: "mdi:timer-lock"
           - entity: sensor.luxtronik_2_0_luxtronik_compressor
             name: "Kompressor"
